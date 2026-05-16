@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dispatches — The Analog Underground</title>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #396273;
+      --text: #ffffff;
+      --dim: #8DC4D1;
+      --accent: #FF69B4;
+      --card-bg: #2e4e5c;
+      --psy-dark: #1a2f38;
+      --psy-gold: #F5B041;
+      --glass-bg: rgba(255,255,255,0.05);
+      --glass-border: rgba(255,255,255,0.1);
+      --border-thick: 3px;
+      --menu-width: 380px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      overflow-x: hidden;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    h1, h2, h3, h4 { font-family: 'Oswald', sans-serif; text-transform: uppercase; line-height: 1.05; }
+
+    ::selection { background: var(--accent); color: #fff; }
+
+    /* ─── SLIDE-OUT MENU ─── */
+    .menu-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0);
+      z-index: 200;
+      pointer-events: none;
+      transition: background 0.4s ease;
+    }
+    .menu-overlay.open {
+      background: rgba(0,0,0,0.55);
+      pointer-events: all;
+    }
+
+    .side-menu {
+      position: fixed;
+      top: 0; left: 0;
+      width: var(--menu-width);
+      height: 100vh;
+      background: var(--psy-dark);
+      border-right: 1px solid var(--glass-border);
+      z-index: 300;
+      transform: translateX(-100%);
+      transition: transform 0.45s cubic-bezier(0.77, 0, 0.175, 1);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .side-menu.open { transform: translateX(0); }
+
+    .menu-spine {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      transform: rotate(180deg);
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: var(--accent);
+      padding: 30px 0;
+      border-right: 1px solid var(--glass-border);
+      flex-shrink: 0;
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,105,180,0.05);
+    }
+
+    .menu-body { padding: 50px 40px 50px 68px; flex: 1; }
+
+    .menu-close {
+      position: absolute;
+      top: 20px; right: 20px;
+      background: none;
+      border: 1px solid var(--glass-border);
+      color: var(--dim);
+      width: 36px; height: 36px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .menu-close:hover { border-color: var(--accent); color: var(--accent); }
+
+    .menu-section { margin-bottom: 40px; }
+    .menu-section-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .menu-links { list-style: none; }
+    .menu-links li { margin-bottom: 10px; }
+    .menu-links a {
+      font-size: 0.85rem;
+      color: var(--dim);
+      letter-spacing: 1px;
+      transition: color 0.2s, padding-left 0.2s;
+      display: block;
+    }
+    .menu-links a:hover { color: var(--accent); padding-left: 8px; }
+
+    .menu-focus-list { list-style: none; }
+    .menu-focus-list li { margin-bottom: 8px; }
+    .menu-focus-list a {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 3px;
+      color: var(--dim);
+      transition: color 0.2s;
+      display: block;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .menu-focus-list a:hover { color: var(--accent); }
+
+    .menu-subscribe {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 24px;
+      border: 2px solid var(--accent);
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.8rem;
+      letter-spacing: 3px;
+      color: var(--accent);
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .menu-subscribe:hover { background: var(--accent); color: #fff; }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      padding: 18px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      background: rgba(26, 47, 56, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .nav-left { display: flex; align-items: center; gap: 24px; }
+
+    .menu-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding: 4px;
+    }
+    .menu-toggle span {
+      display: block;
+      width: 22px; height: 2px;
+      background: var(--dim);
+      transition: all 0.3s ease;
+    }
+    .menu-toggle:hover span { background: var(--accent); }
+    .menu-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .menu-toggle.active span:nth-child(2) { opacity: 0; }
+    .menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+/* ─── LOGO (FIXED) ─── */
+    .logo-link {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+    .logo-link img {
+      height: 80px;        /* was 40px — now properly visible */
+      width: auto;
+      display: block;
+      object-fit: contain;
+      transition: opacity 0.2s;
+    }
+    .logo-link:hover img { opacity: 0.8; }
+    /* Fallback text if data logo.png is missing */
+    .logo-fallback {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 700;
+      font-size: 1.6rem;
+      color: var(--accent);
+      letter-spacing: 2px;
+      display: none;
+    }
+
+
+    .nav-right { display: flex; align-items: center; gap: 24px; }
+    .nav-link {
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      color: var(--dim);
+      transition: color 0.2s;
+      text-transform: uppercase;
+    }
+    .nav-link:hover { color: var(--accent); }
+    .nav-link.active { color: var(--accent); }
+
+    /* ─── PAGE HEADER ─── */
+    .page-header {
+      padding: 130px 5vw 60px;
+      border-bottom: 2px solid var(--accent);
+      position: relative;
+      overflow: hidden;
+    }
+    .page-header::before {
+      content: 'DISPATCHES';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Oswald', sans-serif;
+      font-size: 18vw;
+      font-weight: 700;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(141,196,209,0.07);
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 0;
+    }
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border: var(--border-thick) solid var(--dim);
+    }
+    .header-text {
+      padding: 50px 44px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-right: 2px solid var(--glass-border);
+    }
+    .header-text .eyebrow {
+      color: var(--accent);
+      font-size: 0.75rem;
+      letter-spacing: 4px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header-text .eyebrow::before {
+      content: '';
+      display: block;
+      width: 28px; height: 2px;
+      background: var(--accent);
+    }
+    .header-text h1 { font-size: clamp(2.5rem, 6vw, 5rem); color: var(--text); }
+    .header-text p {
+      margin-top: 16px;
+      color: var(--dim);
+      font-size: 1rem;
+      line-height: 1.7;
+      max-width: 520px;
+    }
+
+    .header-gif { height: 400px; overflow: hidden; position: relative; }
+    .header-gif img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    /* ─── ARTICLES GRID ─── */
+    .articles-wrapper {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 80px 5vw;
+    }
+
+    .articles-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    /* ─── STANDARD ARTICLE CARD (image left / text right) ─── */
+    .article-card {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border: var(--border-thick) solid var(--dim);
+      background: var(--psy-dark);
+      opacity: 0;
+      transform: translateY(40px);
+      transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+    }
+    .article-card:hover {
+      border-color: var(--accent);
+      box-shadow: 8px 8px 0 var(--accent);
+      transform: translateY(-3px);
+    }
+
+    .card-img {
+      height: 400px;
+      overflow: hidden;
+      border-right: 2px solid var(--glass-border);
+      position: relative;
+    }
+    .card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(80%) sepia(20%) contrast(1.2) brightness(0.85);
+      transition: filter 0.6s ease, transform 0.8s ease;
+    }
+    .article-card:hover .card-img img {
+      filter: grayscale(0%) contrast(1.1) saturate(1.2) brightness(1);
+      transform: scale(1.04);
+    }
+
+    /* Contain variant for rectangular images like google-spy-eye.png */
+    .card-img-contain img {
+      object-fit: contain;
+      background: var(--psy-dark);
+      filter: grayscale(20%) contrast(1.1) brightness(0.9);
+    }
+    .article-card:hover .card-img-contain img {
+      filter: grayscale(0%) contrast(1.05) brightness(1);
+      transform: scale(1.02);
+    }
+
+    .card-img-placeholder {
+      height: 400px;
+      border-right: 2px solid var(--glass-border);
+      background: linear-gradient(135deg, var(--card-bg), var(--psy-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Oswald', sans-serif;
+      font-size: 3rem;
+      color: rgba(141,196,209,0.15);
+      letter-spacing: 4px;
+    }
+
+    .card-body {
+      padding: 50px 44px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* ─── VIDEO CARD ─── */
+    .video-card {
+      border: var(--border-thick) solid var(--dim);
+      background: var(--psy-dark);
+      opacity: 0;
+      transform: translateY(40px);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .video-card:hover {
+      border-color: var(--accent);
+      box-shadow: 8px 8px 0 var(--accent);
+    }
+
+    .video-wrapper {
+      width: 100%;
+      background: #000;
+      border-bottom: 2px solid var(--glass-border);
+      position: relative;
+    }
+    .video-wrapper video {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      display: block;
+      background: #000;
+    }
+
+    .video-card .card-body {
+      padding: 30px 44px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ─── SHARED CONTENT STYLES ─── */
+    .article-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .meta-path { font-size: 0.65rem; letter-spacing: 2px; color: var(--dim); opacity: 0.7; }
+    .meta-path span { color: var(--accent); }
+    .meta-date { font-size: 0.65rem; letter-spacing: 2px; color: var(--dim); opacity: 0.6; }
+    .tag {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.6rem;
+      letter-spacing: 2px;
+      padding: 3px 10px;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    .article-title {
+      font-size: clamp(1.2rem, 2.5vw, 1.7rem);
+      color: var(--text);
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+    .article-subtitle {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--dim);
+      margin-bottom: 16px;
+      letter-spacing: 1px;
+    }
+    .article-excerpt {
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--dim);
+      border-left: 2px solid var(--glass-border);
+      padding-left: 16px;
+    }
+
+    .article-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--glass-border);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .btn-read {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 3px;
+      color: var(--accent);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s;
+      padding-bottom: 2px;
+    }
+    .btn-read:hover { border-color: var(--accent); }
+
+    /* ─── SECTION DIVIDER ─── */
+    .section-label {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 5px;
+      color: var(--dim);
+      margin-bottom: 40px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--glass-border);
+    }
+
+    /* ─── NEWSLETTER BAND ─── */
+    .newsletter-band {
+      background: var(--card-bg);
+      border-top: 1px solid var(--dim);
+      border-bottom: 1px solid var(--dim);
+      padding: 60px 5vw;
+      text-align: center;
+    }
+    .newsletter-band h3 { font-size: clamp(1.5rem, 3vw, 2.5rem); color: var(--text); margin-bottom: 10px; }
+    .newsletter-band p { color: var(--dim); margin-bottom: 30px; font-size: 0.9rem; }
+    .newsletter-row {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .newsletter-row input {
+      flex: 1;
+      padding: 14px 20px;
+      background: var(--psy-dark);
+      border: 2px solid var(--dim);
+      border-right: none;
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .newsletter-row input:focus { border-color: var(--accent); }
+    .newsletter-row input::placeholder { color: rgba(141,196,209,0.4); }
+    .newsletter-row button {
+      padding: 14px 24px;
+      background: var(--accent);
+      border: 2px solid var(--accent);
+      color: #fff;
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 3px;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .newsletter-row button:hover { background: transparent; color: var(--accent); }
+
+    /* ─── FOOTER ─── */
+    .page-footer {
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding: 30px 5vw;
+      display: flex;
+      justify-content: center;
+      background: var(--bg);
+    }
+    .footer-container {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 0.75rem;
+      color: var(--dim);
+    }
+    .footer-container a { color: var(--accent); transition: color 0.2s; }
+    .footer-container a:hover { color: var(--text); }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      .header-inner { grid-template-columns: 1fr; }
+      .header-gif { height: 240px; }
+      .header-text { border-right: none; border-bottom: 2px solid var(--glass-border); padding: 30px 24px; }
+      .article-card { grid-template-columns: 1fr; }
+      .card-img, .card-img-placeholder { height: 220px; border-right: none; border-bottom: 2px solid var(--glass-border); }
+      .card-body { padding: 24px; }
+      .video-card .card-body { padding: 20px 24px; }
+      :root { --menu-width: 300px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SLIDE-OUT MENU OVERLAY -->
+  <div class="menu-overlay" id="menuOverlay"></div>
+
+  <!-- SIDE MENU -->
+  <nav class="side-menu" id="sideMenu" aria-hidden="true">
+    <div class="menu-spine">DATA DEFENDERS</div>
+    <button class="menu-close" id="menuClose" aria-label="Close menu">&#10005;</button>
+    <div class="menu-body">
+
+      <div class="menu-section">
+        <div class="menu-section-title">Our Work</div>
+        <ul class="menu-links">
+          <li><a href="digital.html">&larr; Digital Sovereignty</a></li>
+          <li><a href="notes.html" style="color:var(--accent)">Dispatches/Blog</a></li>
+          <li><a href="#">Publication Archive</a></li>
+          <li><a href="#">Tools &amp; Resources</a></li>
+        </ul>
+      </div>
+
+      <div class="menu-section">
+        <div class="menu-section-title">Focus Areas</div>
+        <ul class="menu-focus-list">
+          <li><a href="#">Human Rights</a></li>
+          <li><a href="#">Whistleblower Protection</a></li>
+          <li><a href="#">Litigation Support</a></li>
+        <li><a href="#">AI &amp; Governance</a></li>
+          <li><a href="#">Digital Forensics</a></li>
+     
+         
+    
+        </ul>
+      </div>
+
+      
+  </nav>
+
+  <!-- MAIN NAV -->
+  <nav>
+    <div class="nav-left">
+      <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+      <!-- LOGO — fixed to link back to home -->
+      <a href="index.html" class="logo-link" aria-label="Data Defenders — Home">
+        <img src="https://datadc.b-cdn.net/L1.png" alt="Data Defenders"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <span class="logo-fallback">DATA DEFENDERS</span>
+      </a>
+    </div>
+    <div class="nav-right">
+     
+      <a href="index.html" class="nav-link">Home</a>
+    </div>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <header class="page-header">
+    <div class="header-inner">
+      <div class="header-text">
+        <p class="eyebrow">NOTES FROM THE UNDERGROUND</p>
+        <h1>DISPATCH</h1>
+        <p>Research and Analysis from the front lines on Corporate Fraud, Human Rights, AI &amp; Tech, Security Theater and Data Sovereignty.</p>
+      </div>
+      <div class="header-gif">
+        <img src="https://datadc.b-cdn.net/LAST.gif" alt="Dispatch">
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <main class="articles-wrapper">
+
+    <p class="section-label">LATEST DISPATCH</p>
+
+    <div class="articles-grid">
+
+      <!-- ═══════════════════════════════════════════════
+           ITEM #1 — BLOW THE WHISTLE (VIDEO)
+      ═══════════════════════════════════════════════ -->
+      <article class="video-card" id="videoCard1">
+        <div class="video-wrapper">
+          <video controls preload="metadata" aria-label="Blow the Whistle">
+            <source src="https://datadc.b-cdn.net/wb.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="article-meta">
+              <span class="meta-path">VIDEO <span>&rarr;</span> FEATURE</span>
+              <span class="tag">WHISTLEBLOWER</span>
+            </div>
+            <h2 class="article-title">WHISTLEBLOWERS ARE HEROES</h2>
+            <p class="article-subtitle">WE GOT YOUR BACK - EXPERIENCED & CONFIDENTIAL SUPPORT</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ═══════════════════════════════════════════════
+           ITEM #2 — DATA IS SACRED (SPOKEN WORD)
+      ═══════════════════════════════════════════════ -->
+      <article class="video-card" id="videoCard2">
+        <div class="video-wrapper">
+          <video controls preload="metadata" aria-label="Data Is Sacred — Spoken Word Piece">
+            <source src="https://datadc.b-cdn.net/1data.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="article-meta">
+              <span class="meta-path">VIDEO <span>&rarr;</span> SPOKEN WORD</span>
+              <span class="tag">DATA RIGHTS</span>
+            </div>
+            <h2 class="article-title">DATA IS SACRED</h2>
+            <p class="article-subtitle">A POWERFUL SPOKEN WORD PIECE</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ═══════════════════════════════════════════════
+           ITEM #3 — SEE SOMETHING SAY SOMETHING (CAMPAIGN)
+      ═══════════════════════════════════════════════ -->
+      <article class="video-card" id="videoCard3">
+        <div class="video-wrapper">
+          <video controls preload="metadata" aria-label="See Something Say Something Campaign">
+            <source src="https://datadc.b-cdn.net/1bwcf.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="article-meta">
+              <span class="meta-path">VIDEO <span>&rarr;</span> CAMPAIGN</span>
+              <span class="tag">CAMPAIGN</span>
+            </div>
+            <h2 class="article-title">BLOW THE WHISTLE</h2>
+            <p class="article-subtitle">SEE SOMETHING SAY SOMETHING</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- ═══════════════════════════════════════════════
+           ITEM #4 — GOOGLE BROKE ITS PROMISE
+      ═══════════════════════════════════════════════ -->
+      <article class="article-card" id="articleCard4">
+        <div class="card-img card-img-contain">
+          <img src="https://datadc.b-cdn.net/google-spy-eye.png" alt="Google Broke Its Promise to Me. Now ICE Has My Data."
+               loading="lazy">
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="article-meta">
+              <span class="meta-path">ANALYSIS <span>&rarr;</span> REPORT</span>
+              <span class="meta-date">APRIL 2026</span>
+              <span class="tag">SURVEILLANCE</span>
+            </div>
+            <h2 class="article-title">Google Broke Its Promise to Me. Now ICE Has My Data.</h2>
+            <p class="article-subtitle">A direct account of what happens when Big Tech abandons its users.</p>
+            <p class="article-excerpt">Google once promised that location data related to sensitive locations — clinics, places of worship, immigration offices — would be automatically deleted. That promise is gone. ICE now has access to data that was never supposed to exist.</p>
+          </div>
+          <div class="article-actions">
+            <a href="https://www.eff.org/deeplinks/2026/04/google-broke-its-promise-me-now-ice-has-my-data"
+               target="_blank" rel="noopener noreferrer" class="btn-read">EFF FULL REPORT &rarr;</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- ═══════════════════════════════════════════════
+           ITEM #5 — WEASEL WORDS
+      ═══════════════════════════════════════════════ -->
+      <article class="article-card" id="articleCard5">
+        <div class="card-img">
+          <img src="https://datadc.b-cdn.net/lo.gif" alt="Weasel Words — OpenAI Pentagon Deal" loading="lazy">
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="article-meta">
+              <span class="meta-path">NEWS <span>&rarr;</span> ANALYSIS</span>
+              <span class="meta-date">MARCH 6, 2026</span>
+              <span class="tag">AI &amp; POLICY</span>
+            </div>
+            <h2 class="article-title">Weasel Words</h2>
+            <p class="article-subtitle">OpenAI's Pentagon Deal Won't Stop AI-Powered Surveillance</p>
+            <p class="article-excerpt">The amended contract's key phrases &mdash; "consistent with applicable laws," "intentionally," "deliberate" &mdash; are weasel words. They create ambiguity that protects one side from real accountability. After protests from users and employees, Sam Altman called the initial agreement "opportunistic and sloppy." The U.S. government has historically embraced a lax interpretation of "applicable law" that has blessed mass surveillance.</p>
+          </div>
+          <div class="article-actions">
+            <a href="https://www.eff.org/deeplinks/2026/03/weasel-words-openais-pentagon-deal-wont-stop-ai-powered-surveillance"
+               target="_blank" rel="noopener noreferrer" class="btn-read">EFF FULL REPORT &rarr;</a>
+          </div>
+        </div>
+      </article>
+
+    </div><!-- /articles-grid -->
+  </main>
+
+  <!-- NEWSLETTER -->
+  <section class="newsletter-band">
+    <h3>STAY IN THE LOOP</h3>
+    <p>Dispatches, investigations, and field notes &mdash; directly to your inbox. No tracking pixels.</p>
+    <div class="newsletter-row">
+      <iframe src="https://dash.palform.app/fill/org_0QCQN5W4MZVCT/form_0QCQPYSZ1JP64?f=fat_0QD6ZMAPY0BNQ#ak=29E5CE121FB91C678E5BF361F175A21DCE75B042,1B1B01BB50A85F94DA12F03CD882709C5A5FBE35" height="400px" width="767px"></iframe>
+     
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="page-footer">
+    <div class="footer-container">
+      <span>&copy; 2026 Data Defenders &amp; EST 2005 501(c)3</span>
+      <div style="display:flex;gap:20px;">
+        <a href="#">DDC</a>
+        <a href="#"></a>
+        <a href="digital.html">&larr; Digital Sovereignty</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* ── MENU LOGIC ── */
+    const menuToggle  = document.getElementById('menuToggle');
+    const sideMenu    = document.getElementById('sideMenu');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const menuClose   = document.getElementById('menuClose');
+
+    function openMenu() {
+      sideMenu.classList.add('open');
+      menuOverlay.classList.add('open');
+      menuToggle.classList.add('active');
+      sideMenu.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMenu() {
+      sideMenu.classList.remove('open');
+      menuOverlay.classList.remove('open');
+      menuToggle.classList.remove('active');
+      sideMenu.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    menuToggle.addEventListener('click', () => {
+      sideMenu.classList.contains('open') ? closeMenu() : openMenu();
+    });
+    menuClose.addEventListener('click', closeMenu);
+    menuOverlay.addEventListener('click', closeMenu);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+
+    /* ── SCROLL REVEALS — video cards ── */
+    ['#videoCard1', '#videoCard2', '#videoCard3'].forEach((id, i) => {
+      gsap.to(id, {
+        opacity: 1,
+        y: 0,
+        duration: 0.85,
+        ease: 'power3.out',
+        delay: i * 0.05,
+        scrollTrigger: {
+          trigger: id,
+          start: 'top 88%'
+        }
+      });
+    });
+
+    /* ── SCROLL REVEALS — article cards ── */
+    ['#articleCard4', '#articleCard5'].forEach((id, i) => {
+      gsap.to(id, {
+        opacity: 1,
+        y: 0,
+        duration: 0.75,
+        ease: 'power2.out',
+        delay: i * 0.12,
+        scrollTrigger: {
+          trigger: id,
+          start: 'top 88%'
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

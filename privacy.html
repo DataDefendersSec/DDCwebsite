@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — Data Defenders</title>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #396273;
+      --text: #ffffff;
+      --dim: #8DC4D1;
+      --accent: #FF69B4;
+      --card-bg: #2e4e5c;
+    }
+
+    [data-theme="light"] {
+      --bg: #FCF2EB;
+      --text: #396273;
+      --dim: #EFB099;
+      --accent: #FF69B4;
+      --card-bg: #ffffff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: 'Oswald', sans-serif;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      background: rgba(57, 98, 115, 0.85);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .logo {
+      font-family: 'Oswald';
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--accent);
+      letter-spacing: 1px;
+    }
+
+    .logo:hover {
+      opacity: 0.8;
+    }
+
+    .nav-back {
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      color: var(--dim);
+      transition: color 0.3s;
+    }
+
+    .nav-back:hover {
+      color: var(--accent);
+    }
+
+    /* HERO */
+    .page-hero {
+      padding: 140px 5vw 60px;
+      border-bottom: 2px solid var(--text);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+    }
+
+    .hero-container {
+      width: 100%;
+      max-width: 900px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .page-hero::before {
+      content: 'PRIVACY';
+      position: absolute;
+      bottom: -20px;
+      right: -10px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 25vw;
+      font-weight: 700;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255, 255, 255, 0.06);
+      pointer-events: none;
+      line-height: 1;
+      text-transform: uppercase;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      font-size: 0.75rem;
+      letter-spacing: 4px;
+      margin-bottom: 16px;
+      font-weight: 700;
+    }
+
+    .page-hero h1 {
+      font-size: clamp(3rem, 10vw, 10rem);
+      color: transparent;
+      -webkit-text-stroke: 2px var(--text);
+      line-height: 0.9;
+      margin-bottom: 30px;
+    }
+
+    .page-hero .summary {
+      max-width: 600px;
+      color: var(--dim);
+      font-size: 0.9rem;
+      line-height: 1.8;
+      border-left: 3px solid var(--accent);
+      padding-left: 20px;
+      margin-bottom: 40px;
+    }
+
+    /* HERO IMAGE BOX — from Document 2 */
+    .hero-image-wrapper {
+      position: relative;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .hero-image-wrapper::before {
+      content: '';
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      width: 100%;
+      height: 100%;
+      background-color: var(--accent);
+      z-index: -1;
+    }
+
+    .hero-img {
+      width: 100%;
+      display: block;
+      border: 2px solid var(--text);
+      object-fit: cover;
+    }
+
+    /* CONTENT */
+    .privacy-content {
+      padding: 80px 5vw 120px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .policy-block {
+      margin-bottom: 60px;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    .policy-block h2 {
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      color: var(--text);
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--dim);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .policy-block h2 .num {
+      color: var(--accent);
+      font-size: 0.8em;
+      opacity: 0.7;
+    }
+
+    .policy-block p {
+      color: var(--dim);
+      line-height: 1.9;
+      font-size: 0.875rem;
+      margin-bottom: 12px;
+    }
+
+    [data-theme="light"] .policy-block p {
+      color: var(--text);
+      opacity: 0.75;
+    }
+
+    .policy-block .highlight {
+      background: var(--card-bg);
+      border-left: 3px solid var(--accent);
+      padding: 16px 20px;
+      margin-top: 16px;
+      font-size: 0.85rem;
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    /* FOOTER */
+    .page-footer {
+      border-top: 2px solid var(--text);
+      padding: 30px 5vw;
+      display: flex;
+      justify-content: center;
+    }
+
+    .footer-container {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 0.75rem;
+      color: var(--dim);
+    }
+
+    .footer-container a {
+      color: var(--accent);
+    }
+
+    .footer-container a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .page-hero h1 {
+        -webkit-text-stroke: 1px var(--text);
+      }
+
+      .footer-container {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .hero-image-wrapper::before {
+        top: 10px;
+        left: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+     <a href="index.html" class="logo">
+  <img src="https://i.postimg.cc/mk4qwtfj/Untitled-design.png" alt="Data Defenders" style="height:48px;width:auto;display:block;">
+</a>
+    <a href="index.html" class="nav-back">← BACK TO HOME</a>
+  </nav>
+
+  <div class="page-hero">
+    <div class="hero-container">
+      <p class="eyebrow">// LEGAL</p>
+      <h1>PRIVACY<br>POLICY</h1>
+      <p class="summary">DCC is committed to protecting the privacy of visitors to our website, as well as our members and volunteers. We are dedicated to privacy as a human right. DCC has established this Privacy Policy to explain what information we collect through our websites and how it is used, as well as protections for our members' and donors' personal information.</p>
+
+      <!-- IMAGE BOX -->
+      <div class="hero-image-wrapper">
+        <img src="https://i.postimg.cc/QdgF5rDb/private1.jpg" alt="Data Defenders" class="hero-img">
+      </div>
+
+    </div>
+  </div>
+
+  <div class="privacy-content">
+
+    <div class="policy-block">
+      <h2><span class="num">01 —</span> NO LOG Policy</h2>
+      <p>In this policy, "DCC" refers to DCC staff, board members, cooperating attorneys, interns, volunteers, and consultants, all of whom are bound by law or contract to keep confidential information they receive as part of their assistance to DCC. We are a privacy rights organization. That means we hold ourselves to the standard we demand of others: We collect nothing, We sell nothing, We log nothing besides the site functionality and safety. We respond to messages and do our best to treat all people with respect. This site does not track you. There are no cookies. There is no advertising. We do not sell, share, or monetize any information about visitors in any form.</p>
+      <div class="highlight">
+        We are a 501(c)(3) non-profit in Delaware under RISEUP INTERNATIONAL EST. 2005 as a decentralized Human Rights Organization.
+      </div>
+    </div>
+
+    <div class="policy-block">
+      <h2><span class="num">02 —</span> WHAT WE COLLECT</h2>
+      <p>If you contact us directly via email or Signal, we receive whatever you send. We use that information only to respond to you. Standard server logs (IP addresses, request timestamps) may exist at the infrastructure level via our hosting provider. We do not access, analyze, or retain these beyond what our host automatically manages.</p>
+    </div>
+
+    <div class="policy-block">
+      <h2><span class="num">03 —</span> COOKIES &amp; TRACKING</h2>
+      <p>None. Zero. This site sets no cookies, runs no tracking pixels, and loads no third-party analytics scripts. The only external resources loaded are fonts and open-source JavaScript libraries (Three.js, GSAP) served from public CDNs.</p>
+    </div>
+
+    <div class="policy-block">
+      <h2><span class="num">04 —</span> THIRD PARTIES</h2>
+      <p>We do not share data with third parties because we do not collect data to share. We are not affiliated with any data broker, lead generation service, or advertising network.</p>
+    </div>
+
+    <div class="policy-block">
+      <h2><span class="num">05 —</span> SECURE COMMUNICATIONS</h2>
+      <p>For sensitive matters — including anything related to whistleblower cases please message us through encrypted portals via Signal  <a href="https://tips.hushline.app/to/datadc">Encrypted Hushline Portal</a> </p>
+      <div class="highlight">
+        Signal: +18053161316 Encrypted Message Portal<br>
+        Email: hello@datadc.org<br><br>
+        Hush Line: <a href="https://tips.hushline.app/to/datadc">Encrypted Message Portal</a> 
+      </div>
+    </div>
+
+    <div class="policy-block">
+      <h2><span class="num">06 —</span> HAVE A FANTASTIC DAY</h2>
+      <p>If this policy ever changes, we will update this page. SMILE - BE ORIGINAL - DO GOOD!!</p>
+      <p>Last updated: February 2026</p>
+    </div>
+
+  </div>
+
+  <div class="page-footer">
+    <div class="footer-container">
+      <span>&copy; 2025 Data Defenders. A 501(c)(3) Nonprofit Organization. SAN LUIS OBISPO, CALIFORNIA</span>
+      <a href="index.html">Return to Home →</a>
+    </div>
+  </div>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+    // Hero image fade in with slide up — from Document 2
+    window.addEventListener('load', () => {
+      gsap.to('.hero-image-wrapper', {
+        opacity: 1,
+        y: 0,
+        duration: 1.5,
+        ease: 'power2.out',
+        delay: 0.2
+      });
+    });
+    // Policy blocks scroll reveal
+    gsap.utils.toArray('.policy-block').forEach((block) => {
+      gsap.to(block, {
+        opacity: 1,
+        y: 0,
+        duration: 0.7,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: block,
+          start: 'top 82%',
+        }
+      });
+    });
+    // Hero text entrance
+    gsap.from('.page-hero h1', {
+      opacity: 0,
+      y: 40,
+      duration: 1,
+      ease: 'power3.out',
+      delay: 0.2
+    });
+    gsap.from('.page-hero .summary', {
+      opacity: 0,
+      y: 20,
+      duration: 0.8,
+      ease: 'power2.out',
+      delay: 0.5
+    });
+  </script>
+
+</body>
+
+</html>
