@@ -303,6 +303,8 @@ p a:hover, .footer-col a:hover, .faq-body a:hover {
       display: flex;
       flex-direction: column;
       transition: 0.3s;
+      overflow: hidden;
+      max-height: 100%;
     }
 
     .project-card:hover {
@@ -312,10 +314,12 @@ p a:hover, .footer-col a:hover, .faq-body a:hover {
     }
 
     .card-img-container {
-      height: 55%;
+      flex: 1;
+      min-height: 0;
       width: 100%;
       overflow: hidden;
       border-bottom: 2px solid var(--dim);
+      background: var(--psy-dark, #1a2f38);
     }
 
     .card-img-container a {
@@ -327,7 +331,7 @@ p a:hover, .footer-col a:hover, .faq-body a:hover {
     .card-img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
       filter: grayscale(10%);
       transition: 0.5s;
     }
@@ -339,10 +343,10 @@ p a:hover, .footer-col a:hover, .faq-body a:hover {
 
     .card-info {
       padding: 20px;
-      height: 45%;
+      flex-shrink: 0;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: center;
     }
 
     .card-info h4 {
@@ -1059,7 +1063,7 @@ p a:hover, .footer-col a:hover, .faq-body a:hover {
             <h4>MEDIA & ARTICLES ↗</h4>
             <p>SINCE 2005 DDC HAS WORKED TO PROTECT THE PUBLIC THROUGH HUMAN RIGHTS CAMPAIGNS AROUND THE WORLD. VIEW OUR MEDIA PAGE ABOUT OUR WHISTLEBLOWER PROGRAM, DATA &amp; TECH.</p>
           </div>
-        
+        </div>
       </div>
     </section>
 
